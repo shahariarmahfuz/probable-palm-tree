@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন ড্যাশবোর্ড - গল্পের দুনিয়া</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === Base Styles (Adapted from base.html) === */
+        body {
+            font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .admin-container {
+             max-width: 1100px;
+             margin: 20px auto;
+             padding: 20px;
+             background-color: #ffffff;
+             border-radius: 8px;
+             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .admin-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-header h1 { margin: 0; font-size: 1.6em; color: #fff; }
+        .admin-header h1 a { color: #fff; text-decoration: none; font-weight: 600; }
+        .admin-header nav a { color: #fff; text-decoration: none; margin-left: 15px; font-weight: 500; }
+        .admin-header nav a:hover { text-decoration: underline; }
+        h2, h3 { color: #343a40; font-weight: 600; }
+        h2 { border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
+        h3 { margin-top: 25px; margin-bottom: 15px; font-weight: 500; font-size: 1.4em; }
+        .flash-messages { list-style: none; padding: 0; margin: 15px 0; }
+        .flash-messages li { padding: 12px 15px; margin-bottom: 10px; border-radius: 4px; border: 1px solid transparent; }
+        .flash-messages .success { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc; }
+        .flash-messages .error { background-color: #f8d7da; color: #842029; border-color: #f5c2c7; }
+        .flash-messages .warning { background-color: #fff3cd; color: #664d03; border-color: #ffecb5; }
+        .flash-messages .info { background-color: #cff4fc; color: #055160; border-color: #b6effb; }
+        label { margin-bottom: 5px; display: block; font-weight: 500;}
+        input[type="text"], input[type="password"], select { padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 95%; max-width: 500px; box-sizing: border-box; font-size: 1rem; margin-bottom: 10px; }
+        textarea { width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-family: 'Hind Siliguri', sans-serif; font-size: 1rem; box-sizing: border-box; min-height: 150px; }
+        .page-input { margin-bottom: 15px; }
+        button[type="submit"], button[type="button"] { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; font-family: 'Hind Siliguri', sans-serif; transition: background-color 0.2s ease; }
+        button[type="submit"]:hover, button[type="button"]:hover { background-color: #0056b3; }
+        #add-page-btn { background-color: #198754; margin-top: 10px; padding: 8px 15px; font-size: 0.9em; }
+        #add-page-btn:hover { background-color: #157347; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
+
+        /* === Responsive Table Styles === */
+        .content-table { width:100%; border-collapse: collapse; margin-top: 15px; }
+        .content-table th, .content-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .content-table th { background-color: #e9ecef; font-weight: 600; }
+        .content-table tr:nth-child(even){background-color: #f9f9f9;}
+        .content-table td .action-link, .content-table td .action-button { padding: 4px 9px; text-decoration: none; border-radius: 3px; font-size: 0.9em; margin-right: 5px; border: 1px solid transparent; cursor: pointer; display: inline-block; margin-bottom: 4px; }
+        .content-table td .action-link.view { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb;}
+        .content-table td .action-link.edit { background-color: #fff3cd; color: #856404; border-color: #ffeeba;}
+        .content-table td .action-button.reanalyze { background-color: #d1e7dd; color: #155724; border-color: #c3e6cb;}
+        .content-table td .action-button.delete { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;}
+        .content-table td form { display: inline-block; margin-left: 0px; margin-right: 5px; }
+
+        /* Mobile Table Styles */
+        @media (max-width: 768px) {
+            .content-table thead { display: none; }
+            .content-table, .content-table tbody, .content-table tr, .content-table td { display: block; width: 100%; box-sizing: border-box; }
+            .content-table tr { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; padding: 10px; background-color: #fff !important; }
+            .content-table td { text-align: right; padding-left: 45%; position: relative; border: none; border-bottom: 1px dashed #eee; padding-top: 8px; padding-bottom: 8px; min-height: 25px; }
+            .content-table td:last-child { border-bottom: none; }
+            .content-table td::before { content: attr(data-label); position: absolute; left: 10px; width: calc(45% - 20px); padding-right: 10px; font-weight: bold; text-align: left; white-space: nowrap; color: #333; }
+
+             /* === অ্যাকশন বাটন ফিক্স (মোবাইল) === */
+            .content-table td[data-label="ক্রিয়াকলাপ"] {
+                text-align: left;
+                padding-left: 10px;
+            }
+            /* অ্যাকশন কলামের লেবেল হাইড করা */
+            .content-table td[data-label="ক্রিয়াকলাপ"]::before {
+                display: none;
+            }
+            /* অ্যাকশন বাটন স্পেসিং */
+            .content-table td[data-label="ক্রিয়াকলাপ"] .action-link,
+            .content-table td[data-label="ক্রিয়াকলাপ"] .action-button,
+            .content-table td[data-label="ক্রিয়াকলাপ"] form {
+                 margin-right: 8px;
+                 margin-bottom: 8px;
+                 display: inline-block;
+                 vertical-align: middle;
+            }
+             /* =============================== */
+        }
+        /* === General Responsive Styles for Admin === */
+         @media (max-width: 768px) {
+             .admin-container { width: auto; margin: 15px; padding: 15px; }
+             .admin-header { flex-direction: column; align-items: flex-start; }
+             .admin-header h1 { font-size: 1.4em; margin-bottom: 10px; }
+             .admin-header nav { margin-top: 5px; }
+             .admin-header nav a { margin-left: 0; margin-right: 10px; }
+             h2 { font-size: 1.6em; }
+             h3 { font-size: 1.2em; }
+             input[type="text"], input[type="password"], select { max-width: none; width: 100%; }
+         }
+         @media (max-width: 480px) {
+             body { font-size: 15px; }
+             .admin-container { margin: 10px; padding: 10px; }
+             .admin-header { padding: 10px 15px; }
+             .admin-header nav a { display: block; margin: 5px 0; }
+             h2 { font-size: 1.4em; }
+             h3 { font-size: 1.1em; }
+             button[type="submit"], button[type="button"] { width: 100%; padding: 12px; font-size: 1em; }
+             #add-page-btn { width: auto; padding: 8px 15px; }
+         }
+    </style>
+</head>
+<body>
+
+    <header class="admin-header">
+        <h1><a href="{{ url_for('index') }}">অ্যাডমিন প্যানেল</a></h1>
+        <nav>
+            <a href="{{ url_for('index') }}">সাইট দেখুন</a>
+            {% if 'admin_logged_in' in session %}
+                <a href="{{ url_for('admin_dashboard') }}">ড্যাশবোর্ড</a>
+                <a href="{{ url_for('admin_logout') }}">লগআউট</a>
+            {% else %}
+                <a href="{{ url_for('admin_login') }}">লগইন</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="admin-container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <h2>অ্যাডমিন ড্যাশবোর্ড</h2>
+
+        {# Add Content Form #}
+        <h3>নতুন কনটেন্ট যোগ করুন</h3>
+        <form method="post" action="{{ url_for('add_content') }}">
+            <div><label for="title">শিরোনাম:</label><input type="text" id="title" name="title" required></div>
+            <div><label for="content_type">কনটেন্টের ধরণ:</label>
+                <select name="content_type" id="content_type" required>
+                    <option value="" disabled selected>-- নির্বাচন করুন --</option>
+                    <option value="গল্প">গল্প</option><option value="কবিতা">কবিতা</option><option value="নাটক">নাটক</option>
+                </select>
+            </div>
+            <div id="pages-container" style="margin-top: 15px;">
+                <label>পাতাসমূহ:</label>
+                <div class="page-input">
+                    <textarea name="pages[]" id="page-editor-1" class="tinymce-editor" rows="15" placeholder="প্রথম পাতার বিষয়বস্তু..."></textarea>
+                </div>
+            </div>
+            <button type="button" id="add-page-btn">আরও পাতা যোগ করুন</button><br><br>
+            <button type="submit">কনটেন্ট যোগ করুন</button>
+        </form>
+        <hr>
+
+        {# Existing Content Table #}
+        <h3>বিদ্যমান কনটেন্টসমূহ</h3>
+        {% if contents %}
+            <table class="content-table">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>শিরোনাম</th><th>ধরণ</th><th>পাতা</th><th>তৈরির সময়</th><th>ক্রিয়াকলাপ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in contents %}
+                    <tr>
+                        <td data-label="ID">{{ item.id }}</td>
+                        <td data-label="শিরোনাম">{{ item.title }}</td>
+                        <td data-label="ধরণ">{{ item.content_type }}</td>
+                        <td data-label="পাতা">{{ item.page_count }}</td>
+                        <td data-label="তৈরির সময়">{{ item.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td data-label="ক্রিয়াকলাপ">
+                            <a href="{{ url_for('view_content_first_page', content_id=item.id) }}" target="_blank" class="action-link view">[দেখুন]</a>
+                            <a href="{{ url_for('edit_content_form', content_id=item.id) }}" class="action-link edit">[সম্পাদনা]</a>
+                            <form method="post" action="{{ url_for('reanalyze_content', content_id=item.id) }}" onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই কনটেন্টের AI ডেটা পুনরায় বিশ্লেষণ করতে চান? এতে কিছু সময় লাগতে পারে।');">
+                                <button type="submit" class="action-button reanalyze">পুনরায় বিশ্লেষণ (AI)</button>
+                            </form>
+                            <form method="post" action="{{ url_for('delete_content', content_id=item.id) }}" onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই কনটেন্টটি মুছে ফেলতে চান?');">
+                                <button type="submit" class="action-button delete">মুছুন</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>এখনো কোনো কনটেন্ট যোগ করা হয়নি।</p>
+        {% endif %}
+
+    </div>
+
+    {# JavaScript লোড (Body-র শেষে) #}
+    <script src="https://cdn.tiny.cloud/1/70yp8unkx0vcxi03s5hjyj8k6pyroa30gjr5wj66t7jsmakf/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        function initializeTinyMCE(selector) {
+            tinymce.init({
+                selector: selector,
+                plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+                menubar: 'file edit view insert format tools table help',
+                toolbar: 'undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | removeformat | fullscreen preview | help',
+                height: 400,
+                language: 'bn',
+                language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n/langs6/bn.js',
+                autosave_ask_before_unload: true,
+                autosave_interval: '30s',
+                autosave_prefix: '{path}{query}-{id}-',
+                autosave_restore_when_empty: false,
+                autosave_retention: '2m',
+                image_advtab: true,
+                importcss_append: true,
+                content_style: `
+                    body { font-family: 'Hind Siliguri', sans-serif; font-size: 16px; line-height: 1.7; padding: 8px; }
+                    p { margin: 0 0 1em 0; }
+                    img { max-width: 100%; height: auto; }
+                `,
+                 mobile: { menubar: true, plugins: 'lists autolink', toolbar: 'undo redo | bold italic | styles' }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', (event) => { initializeTinyMCE('.tinymce-editor'); });
+        document.getElementById('add-page-btn').addEventListener('click', function() {
+            const container = document.getElementById('pages-container');
+            const pageCount = container.getElementsByClassName('page-input').length + 1;
+            const newPageDiv = document.createElement('div');
+            newPageDiv.classList.add('page-input');
+            const newEditorId = `page-editor-${pageCount}`;
+            newPageDiv.innerHTML = `<textarea name="pages[]" id="${newEditorId}" rows="15" placeholder="পাতা ${pageCount}-এর বিষয়বস্তু..."></textarea>`;
+            container.appendChild(newPageDiv);
+            initializeTinyMCE(`#${newEditorId}`);
+        });
+    </script>
+
+</body>
+</html>

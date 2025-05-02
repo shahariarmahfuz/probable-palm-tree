@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ content_item.title }} ({{ content_item.content_type }}) - পাতা {{ current_page }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === বেস স্টাইল এবং রিসেট === */
+        :root {
+            --primary-color: #007bff; /* প্রধান রং (নীল) */
+            --secondary-color: #6c757d; /* গৌণ রং (ধূসর) */
+            --light-bg: #f8f9fa; /* হালকা পটভূমি */
+            --dark-text: #212529; /* গাঢ় টেক্সট */
+            --light-text: #495057; /* হালকা টেক্সট */
+            --border-color: #dee2e6; /* বর্ডার রং */
+            --white-color: #ffffff;
+            --content-max-width: 800px; /* কনটেন্টের সর্বোচ্চ প্রস্থ */
+            --border-radius: 6px; /* বর্ডার রেডিয়াস */
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* বক্স শ্যাডো */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.8; /* পঠনযোগ্যতার জন্য লাইন হাইট বৃদ্ধি */
+            background-color: var(--light-bg); /* পুরো পেজের জন্য হালকা ব্যাকগ্রাউন্ড */
+            color: var(--dark-text);
+            font-size: 16px; /* বেস ফন্ট সাইজ */
+            padding-top: 20px; /* উপরে একটু স্পেস */
+            padding-bottom: 40px; /* নিচে একটু স্পেস */
+        }
+
+        /* === কন্টেন্ট কন্টেইনার === */
+        .content-container {
+            max-width: var(--content-max-width);
+            margin: 20px auto;
+            padding: 30px 40px; /* প্যাডিং বৃদ্ধি */
+            background-color: var(--white-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color); /* হালকা বর্ডার */
+            overflow: hidden; /* ফ্লোটিং এলিমেন্টের জন্য */
+        }
+
+        /* === শিরোনাম === */
+        h2.main-title {
+            color: var(--dark-text);
+            font-weight: 700; /* আরো মোটা */
+            border-bottom: 2px solid var(--primary-color); /* ভিন্ন রঙের বর্ডার */
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 2em; /* বড় ফন্ট সাইজ */
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap; /* ছোট স্ক্রিনের জন্য */
+        }
+
+        h2.main-title small {
+            font-size: 0.5em; /* আরও ছোট */
+            color: var(--secondary-color);
+            font-weight: 400;
+            margin-left: 10px; /* টাইটেল থেকে সামান্য দূরে */
+            background-color: #e9ecef; /* হালকা ব্যাকগ্রাউন্ড */
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        h3.page-info {
+            margin-top: -15px; /* h2 এর বর্ডারের সাথে কিছুটা ওভারল্যাপ */
+            margin-bottom: 25px;
+            font-weight: 500;
+            text-align: center;
+            color: var(--light-text);
+            font-size: 1.1em;
+            background-color: var(--light-bg); /* হালকা ব্যাকগ্রাউন্ড */
+            display: inline-block; /* টেক্সট অনুযায়ী সাইজ */
+            padding: 5px 15px;
+            border-radius: 20px; /* গোলাকার */
+            border: 1px solid var(--border-color);
+            position: relative; /* পজিশনিংয়ের জন্য */
+            left: 50%;
+            transform: translateX(-50%); /* সেন্টারিং */
+        }
+
+        /* === স্টোরি কন্টেন্ট স্টাইল === */
+        .story-content {
+            margin-bottom: 30px;
+            padding: 20px; /* ভিতরের প্যাডিং */
+            background-color: var(--white-color); /* সাদা ব্যাকগ্রাউন্ড */
+            border: none; /* আগের বর্ডার বাদ */
+            font-size: 1.1em; /* স্ট্যান্ডার্ড ফন্ট সাইজ */
+            color: #333; /* টেক্সটের রং একটু হালকা */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        /* TinyMCE / Rich Text কন্টেন্টের জন্য আরও উন্নত স্টাইল */
+        .story-content p {
+            margin-bottom: 1.2em; /* প্যারাগ্রাফের মধ্যে ভালো স্পেস */
+            text-align: justify; /* জাস্টিফাইড টেক্সট পঠনযোগ্যতা বাড়ায় */
+        }
+        .story-content br { display: none; /* ম্যানুয়াল <br> এর ব্যবহার নিরুৎসাহিত, প্যারাগ্রাফ ব্যবহার করুন */ }
+        .story-content ul, .story-content ol {
+            padding-left: 30px; /* লিস্ট আইটেমের ইনডেন্টেশন */
+            margin-bottom: 1.2em;
+        }
+        .story-content li {
+            margin-bottom: 0.6em; /* লিস্ট আইটেমের মধ্যে স্পেস */
+        }
+        .story-content strong, .story-content b {
+            font-weight: 600;
+            color: #1a1a1a; /* বোল্ড টেক্সট সামান্য গাঢ় */
+        }
+        .story-content em, .story-content i {
+            font-style: italic;
+            color: #555; /* ইটালিক টেক্সটের ভিন্ন রং */
+        }
+        .story-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--primary-color);
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+        }
+        .story-content a:hover {
+            color: #0056b3;
+            border-bottom-color: #0056b3;
+        }
+        .story-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 25px auto; /* ছবির উপরে নিচে স্পেস */
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .story-content blockquote {
+            margin: 20px 0;
+            padding: 15px 20px;
+            border-left: 5px solid var(--primary-color);
+            background-color: var(--light-bg);
+            color: var(--light-text);
+            font-style: italic;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        .story-content pre, .story-content code {
+            overflow-x: auto;
+            background-color: #2d2d2d; /* ডার্ক কোড ব্লক */
+            color: #f1f1f1; /* হালকা টেক্সট */
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.9em;
+            margin-bottom: 1.2em;
+            white-space: pre; /* Preserve whitespace */
+        }
+        .story-content code:not(pre > code) {
+             /* Inline code */
+            background-color: #e9ecef;
+            color: #c7254e; /* Distinct color for inline code */
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        /* === AI ডেটা সেকশন (গুরুত্বপূর্ণ লাইন ও সংজ্ঞা) === */
+        .ai-data-section {
+            margin-top: 30px;
+            padding: 20px 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px; /* নিচে স্পেস */
+        }
+
+        .important-lines {
+             background-color: #e6f7ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
+             border: 1px solid #91d5ff; /* নীল বর্ডার */
+             color: #0050b3;
+        }
+        .important-lines h4 {
+            margin-top: 0;
+            color: #003a8c; /* গাঢ় নীল হেডিং */
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 1px solid #91d5ff;
+            padding-bottom: 8px;
+        }
+        .important-lines ul {
+            list-style: none; /* বুলেট বাদ */
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .important-lines li {
+            margin-bottom: 8px;
+            font-style: normal; /* ইটালিক বাদ */
+            color: #0050b3;
+            font-size: 1em;
+            padding-left: 20px; /* আইকনের জন্য জায়গা */
+            position: relative;
+        }
+        /* বুলেট স্টাইল কাস্টমাইজেশন (যেমন একটি ছোট ডট) */
+        .important-lines li::before {
+            content: '✦'; /* অথবা অন্য কোনো আইকন/চিহ্ন */
+            position: absolute;
+            left: 0;
+            color: #1890ff;
+            font-size: 0.9em;
+            line-height: inherit;
+        }
+
+
+        .definitions {
+            background-color: #fffbe6; /* হালকা হলুদ ব্যাকগ্রাউন্ড */
+            border: 1px solid #ffe58f; /* হলুদ বর্ডার */
+            color: #874d00;
+        }
+        .definitions h3 {
+            margin-top: 0;
+            color: #ad6800; /* গাঢ় হলুদ হেডিং */
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 1px solid #ffe58f;
+            padding-bottom: 8px;
+        }
+        .definitions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .definitions li {
+            margin-bottom: 12px; /* আইটেমের মধ্যে বেশি স্পেস */
+            border-bottom: 1px dashed #ffe58f;
+            padding-bottom: 10px;
+            font-size: 1em;
+        }
+        .definitions li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .definitions strong {
+            color: #d46b08; /* শব্দের জন্য ভিন্ন রং */
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        /* === কোনো কন্টেন্ট না থাকলে বার্তা === */
+        .no-content-message {
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--light-text);
+            text-align: center;
+            background-color: var(--light-bg);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            font-style: italic;
+        }
+
+        /* === পেজ নেভিগেশন === */
+        .page-navigation {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+            display: flex; /* ফ্লেক্সবক্স ব্যবহার */
+            justify-content: space-between; /* দুই প্রান্তে বাটন */
+            align-items: center;
+            flex-wrap: wrap; /* ছোট স্ক্রিনে র‍্যাপিং */
+            gap: 15px; /* আইটেমগুলির মধ্যে গ্যাপ */
+        }
+
+        .page-navigation a, .page-navigation span {
+            display: inline-block;
+            padding: 10px 20px; /* প্যাডিং বৃদ্ধি */
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            font-weight: 500;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .page-navigation a:hover {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .page-navigation .current-page {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color);
+            cursor: default;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .page-navigation span:not(.current-page) { /* Disabled Button Style */
+            color: var(--secondary-color);
+            background-color: var(--light-bg);
+            border-color: var(--border-color);
+            cursor: not-allowed;
+            opacity: 0.7; /* কিছুটা অস্পষ্ট */
+        }
+
+        /* নেভিগেশনে আগের/পরের টেক্সট এর সাথে আইকন */
+        .page-navigation a[href*='page_number={{ current_page - 1 }}']::before,
+        .page-navigation span:first-child::before {
+            content: '« '; /* আগের তীর */
+            margin-right: 5px;
+        }
+        .page-navigation a[href*='page_number={{ current_page + 1 }}']::after,
+        .page-navigation span:last-child::after {
+            content: ' »'; /* পরের তীর */
+            margin-left: 5px;
+        }
+
+
+        /* === হোমপেজে ফেরার লিংক === */
+        .back-to-home {
+            text-align: center;
+            margin-top: 40px; /* নেভিগেশন থেকে স্পেস */
+        }
+        .back-to-home a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: inline-block; /* প্যাডিং কাজ করার জন্য */
+        }
+        .back-to-home a:hover {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+        .back-to-home a::before {
+            content: '🏠 '; /* হোম আইকন */
+            margin-right: 5px;
+        }
+
+
+        /* === মিডিয়া কোয়েরি - রেসপন্সিভ ডিজাইন === */
+
+        /* ট্যাবলেট এবং ছোট ডেস্কটপ (<= 992px) */
+        @media (max-width: 992px) {
+            :root {
+                --content-max-width: 90%; /* প্রস্থ কিছুটা কমানো */
+            }
+            .content-container {
+                padding: 25px 30px;
+            }
+            h2.main-title {
+                font-size: 1.8em;
+            }
+            .story-content {
+                font-size: 1.05em; /* ফন্ট সাইজ সামান্য কমানো */
+            }
+        }
+
+        /* বড় মোবাইল এবং ট্যাবলেট পোর্ট্রেট (<= 768px) */
+        @media (max-width: 768px) {
+            body {
+                 padding-top: 15px;
+                 padding-bottom: 30px;
+                 font-size: 15px; /* বেস ফন্ট সাইজ কমানো */
+            }
+            .content-container {
+                max-width: 95%; /* প্রায় পুরো প্রস্থ */
+                margin: 15px auto;
+                padding: 20px 25px;
+            }
+            h2.main-title {
+                font-size: 1.6em;
+                padding-bottom: 12px;
+                margin-bottom: 20px;
+                justify-content: center; /* শিরোনাম সেন্টারে */
+                text-align: center;
+            }
+            h2.main-title small {
+                margin-top: 5px; /* টাইপ ট্যাগ নিচে */
+                margin-left: 0;
+                display: block; /* ব্লক লেভেলে */
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            h3.page-info {
+                font-size: 1em;
+                padding: 4px 12px;
+                margin-bottom: 20px;
+            }
+            .story-content {
+                font-size: 1em;
+                padding: 15px;
+            }
+            .story-content p {
+                text-align: left; /* ছোট স্ক্রিনে লেফ্ট অ্যালাইন ভালো */
+                line-height: 1.7;
+            }
+            .ai-data-section {
+                padding: 15px 20px;
+            }
+            .page-navigation {
+                flex-direction: column; /* বাটন নিচে নিচে */
+                align-items: stretch; /* বাটন পুরো প্রস্থে */
+                gap: 10px;
+            }
+            .page-navigation a, .page-navigation span {
+                width: 100%; /* পুরো প্রস্থ */
+                padding: 12px 15px; /* প্যাডিং সমন্বয় */
+            }
+             .page-navigation .current-page {
+                order: -1; /* বর্তমান পৃষ্ঠা সংখ্যা উপরে */
+            }
+        }
+
+        /* ছোট মোবাইল (<= 576px) */
+        @media (max-width: 576px) {
+            body {
+                line-height: 1.7; /* লাইন হাইট সমন্বয় */
+                font-size: 14px; /* ফন্ট সাইজ আরও কমানো */
+                padding-top: 10px;
+                padding-bottom: 20px;
+            }
+            .content-container {
+                padding: 15px 15px; /* প্যাডিং আরও কমানো */
+                margin: 10px auto;
+                border-radius: 4px; /* কম রেডিয়াস */
+            }
+            h2.main-title {
+                font-size: 1.4em;
+            }
+            h3.page-info {
+                font-size: 0.9em;
+            }
+            .story-content {
+                font-size: 0.95em;
+                padding: 10px;
+            }
+            .important-lines li, .definitions li {
+                 font-size: 0.95em;
+            }
+            .ai-data-section h4, .ai-data-section h3 {
+                font-size: 1em;
+            }
+            .back-to-home a {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="content-container">
+        {# শিরোনাম এবং বিষয়বস্তুর প্রকার দেখানোর জন্য নতুন ক্লাস ব্যবহার #}
+        <h2 class="main-title">
+            {{ content_item.title }}
+            <small>{{ content_item.content_type }}</small>
+        </h2>
+        {# পৃষ্ঠা নম্বর দেখানোর জন্য নতুন ক্লাস ব্যবহার #}
+        <h3 class="page-info">পাতা {{ current_page }} / {{ total_pages }}</h3>
+
+        <div class="story-content">
+            {# |safe ফিল্টার ব্যবহার করে HTML রেন্ডার করা হচ্ছে #}
+            {{ page_data.page_content | safe }}
+        </div>
+
+        {# AI ডেটা সেকশনগুলো এখন .ai-data-section ক্লাসের অধীনে #}
+        {% if important_lines or definitions %}
+            {% if important_lines %}
+            <div class="ai-data-section important-lines">
+                <h4>গুরুত্বপূর্ণ লাইনসমূহ:</h4>
+                <ul>
+                    {% for line in important_lines %}<li>{{ line }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if definitions %}
+            <div class="ai-data-section definitions">
+                <h3>কঠিন শব্দের অর্থ:</h3>
+                <ul>
+                    {% for word, definition in definitions.items() %}<li><strong>{{ word }}:</strong> {{ definition }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% elif not page_data.page_content %}
+             {# কোনো কন্টেন্ট বা AI ডেটা না থাকলে বার্তা #}
+            <p class="no-content-message">এই পাতায় কোনো বিষয়বস্তু বা সংরক্ষিত AI ডেটা পাওয়া যায়নি।</p>
+        {% endif %}
+
+        {# পেজ নেভিগেশন #}
+        <div class="page-navigation">
+            {# আগের পাতার বাটন #}
+            {% if current_page > 1 %}
+                <a href="{{ url_for('view_content_page', content_id=content_id, page_number=current_page-1) }}">আগের পাতা</a>
+            {% else %}
+                <span>আগের পাতা</span> {# নিষ্ক্রিয় বাটন #}
+            {% endif %}
+
+            {# বর্তমান পৃষ্ঠা সংখ্যা #}
+            <span class="current-page">{{ current_page }}</span>
+
+            {# পরের পাতার বাটন #}
+            {% if current_page < total_pages %}
+                <a href="{{ url_for('view_content_page', content_id=content_id, page_number=current_page+1) }}">পরের পাতা</a>
+            {% else %}
+                <span>পরের পাতা</span> {# নিষ্ক্রিয় বাটন #}
+            {% endif %}
+        </div>
+
+        {# হোমপেজে ফেরার লিংক #}
+        <div class="back-to-home">
+            <a href="{{ url_for('index') }}">হোমপেজে ফিরে যান</a>
+        </div>
+    </div>
+</body>
+</html>

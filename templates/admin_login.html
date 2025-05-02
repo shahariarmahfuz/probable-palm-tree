@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}অ্যাডমিন লগইন{% endblock %}
+
+{% block content %}
+<h2>অ্যাডমিন লগইন</h2>
+<form method="post">
+    <div>
+        <label for="username">ইউজারনেম:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <br>
+    <div>
+        <label for="password">পাসওয়ার্ড:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <br>
+    <button type="submit">লগইন</button>
+</form>
+{% endblock %}
