@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Admin
+google-generativeai # সর্বশেষ সংস্করণ চেক করুন
+python-dotenv
+requests # অনেক সময় google-generativeai এর জন্য দরকার হতে পারে
+google-generativeai
+psycopg2-binary
+
