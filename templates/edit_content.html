@@ -7,13 +7,11 @@
 <form method="post" action="{{ url_for('update_content', content_id=content_item.id) }}">
     <div>
         <label for="title">শিরোনাম:</label><br>
-        {# ইনপুট সাইজ এবং ভ্যালু আগের মতই আছে #}
         <input type="text" id="title" name="title" required size="50" value="{{ content_item.title }}" style="width: 95%; max-width: 500px;">
     </div>
     <br>
     <div>
         <label for="content_type">কনটেন্টের ধরণ:</label><br>
-        {# সিলেক্ট বক্স আগের মতই আছে #}
         <select name="content_type" id="content_type" required style="width: 95%; max-width: 500px;">
             <option value="গল্প" {% if content_item.content_type == 'গল্প' %}selected{% endif %}>গল্প</option>
             <option value="কবিতা" {% if content_item.content_type == 'কবিতা' %}selected{% endif %}>কবিতা</option>
@@ -21,57 +19,63 @@
         </select>
     </div>
     <br>
-    <div id="pages-container-edit">
+    <div id="pages-container-edit"> {# নতুন পেজ যোগ করার জন্য কন্টেইনার #}
         <label>পাতাসমূহ:</label><br>
         {% if pages %}
             {% for page in pages %}
             <div class="page-input-edit">
-                <h4>পাতা {{ loop.index }} (ডিবি আইডি: {{ page.id }})</h4> {# page.page_number এর বদলে loop.index ব্যবহার করা হলো যদি page_number না থাকে #}
-                <input type="hidden" name="page_ids[]" value="{{ page.id }}">
-
-                {# === পরিবর্তিত অংশ: Textarea তে ক্লাস যোগ করা === #}
+                <h4>পাতা {{ loop.index }} (ডিবি আইডি: {{ page.id }})</h4>
+                <input type="hidden" name="page_ids[]" value="{{ page.id }}"> {# বিদ্যমান পেজের আইডি #}
                 <textarea name="pages_content[]" class="tinymce-editor" id="page-editor-{{ page.id }}">{{ page.page_content }}</textarea>
-                {# rows এবং cols অ্যাট্রিবিউট বাদ দেওয়া হয়েছে কারণ TinyMCE উচ্চতা নিয়ন্ত্রণ করবে #}
-                {# =============================================== #}
-
-                {# এখানে পেজ ডিলিট বাটন যোগ করা যেতে পারে (আরও জটিল হবে) #}
-                 {# <button type="button" class="delete-page-btn" data-page-id="{{ page.id }}">এই পাতা মুছুন</button> #}
+                {# ডিলিট বাটন কমেন্ট আউট রাখা হলো
+                 <button type="button" class="delete-page-btn" data-page-id="{{ page.id }}">এই পাতা মুছুন</button>
+                #}
             </div>
             {% endfor %}
         {% else %}
-            <p>কোনো পাতা পাওয়া যায়নি।</p>
-             {# এখানে নতুন পাতা যোগ করার অপশন যোগ করা যেতে পারে #}
-             {# <div class="page-input-edit new-page">
-                 <h4>নতুন পাতা</h4>
-                 <input type="hidden" name="page_ids[]" value="new"> নিউ পেজ আইডি নির্দেশক
-                 <textarea name="pages_content[]" class="tinymce-editor" placeholder="নতুন পাতার বিষয়বস্তু..."></textarea>
-             </div> #}
+            <p>কোনো পাতা পাওয়া যায়নি। আপনি নতুন পাতা যোগ করতে পারেন।</p>
         {% endif %}
     </div>
 
-    {# পেজ যোগ করার বাটন (যদি প্রয়োজন হয়) #}
-    {# <button type="button" id="add-page-btn-edit">আরও নতুন পাতা যোগ করুন</button> #}
+    {# === নতুন পেজ যোগ করার বাটন যুক্ত করা হলো === #}
+    <button type="button" id="add-page-btn-edit" style="margin-top: 15px; background-color: #28a745; border-color: #28a745;">আরও নতুন পাতা যোগ করুন</button>
+    {# ========================================= #}
 
-    <br><br>
+    <br><br><br> {# বাটনের নিচে একটু স্পেস #}
     <button type="submit">আপডেট করুন</button>
-    <a href="{{ url_for('admin_dashboard') }}" style="margin-left: 15px; text-decoration: none; color: #dc3545;">বাতিল</a> {# বাতিল লিংক স্টাইল করা হলো #}
+    <a href="{{ url_for('admin_dashboard') }}" style="margin-left: 15px; text-decoration: none; color: #dc3545;">বাতিল</a>
 </form>
 <style>
     .page-input-edit {
-        margin-bottom: 25px; /* স্পেস বাড়ানো হলো */
-        border: 1px solid #dee2e6; /* হালকা বর্ডার */
+        margin-bottom: 25px;
+        border: 1px solid #dee2e6;
         padding: 20px;
         border-radius: 5px;
-        background-color: #f T9f9f9; /* হালকা ব্যাকগ্রাউন্ড */
+        background-color: #f9f9f9; /* আগের ভুল বানান ঠিক করা হলো */
     }
     .page-input-edit h4 {
         margin-top: 0;
-        margin-bottom: 15px; /* নিচে স্পেস */
-        font-size: 1.1em; /* সাইজ সামান্য বাড়ানো */
-        color: #495057; /* রঙ পরিবর্তন */
-        border-bottom: 1px solid #eee; /* নিচে হালকা দাগ */
+        margin-bottom: 15px;
+        font-size: 1.1em;
+        color: #495057;
+        border-bottom: 1px solid #eee;
         padding-bottom: 8px;
     }
+    /* নতুন যোগ করা বাটনের স্টাইল */
+    #add-page-btn-edit {
+        padding: 8px 15px;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-family: 'Hind Siliguri', sans-serif;
+        transition: background-color 0.2s ease;
+    }
+    #add-page-btn-edit:hover {
+        background-color: #218838; /* Hover কালার */
+    }
+
     /* ডিলিট বাটন স্টাইল (যদি ব্যবহার করা হয়) */
     /* .delete-page-btn { background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 0.85em; float: right; margin-top: -5px; } */
     /* .delete-page-btn:hover { background-color: #c82333; } */
@@ -86,14 +90,25 @@
 <script src="https://cdn.tiny.cloud/1/70yp8unkx0vcxi03s5hjyj8k6pyroa30gjr5wj66t7jsmakf/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
 <script>
-    // TinyMCE ইনিশিয়ালাইজেশন ফাংশন (admin.html থেকে কপি করা যেতে পারে)
+    // === TinyMCE ইনিশিয়ালাইজেশন ফাংশন (আগের উত্তরের উন্নত সংস্করণ) ===
     function initializeTinyMCE(selector) {
         tinymce.init({
-            selector: selector, // এখানে ক্লাস সিলেক্টর ব্যবহার করা হচ্ছে
-            plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
+            selector: selector,
+            plugins: [
+                'preview', 'importcss', 'searchreplace', 'autolink', 'autosave', 'save', 'directionality',
+                'code', 'visualblocks', 'visualchars', 'fullscreen', 'image', 'link', 'media', 'template',
+                'codesample', 'table', 'charmap', 'pagebreak', 'nonbreaking', 'anchor', 'insertdatetime',
+                'advlist', 'lists', 'wordcount', 'help', 'charmap', 'quickbars', 'emoticons', 'accordion',
+                'hr', 'paste', 'print', 'textcolor', 'colorpicker'
+            ],
             menubar: 'file edit view insert format tools table help',
-            toolbar: 'undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | removeformat | fullscreen preview | help',
-            height: 400, // এডিটরের উচ্চতা
+            toolbar:
+                'undo redo | styles | bold italic underline strikethrough | ' +
+                'forecolor backcolor | alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image media table hr | ' +
+                'removeformat | subscript superscript | charmap | code | ' +
+                'fullscreen preview print | help',
+            height: 450,
             language: 'bn',
             language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n/langs6/bn.js',
             autosave_ask_before_unload: true,
@@ -103,62 +118,97 @@
             autosave_retention: '2m',
             image_advtab: true,
             importcss_append: true,
-            // এডিটরের ভিতরের কনটেন্টের স্টাইল
             content_style: `
-                body { font-family: 'Hind Siliguri', sans-serif; font-size: 16px; line-height: 1.7; padding: 8px; }
-                p { margin: 0 0 1em 0; }
-                img { max-width: 100%; height: auto; }
+                body {
+                    font-family: 'Hind Siliguri', sans-serif;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    padding: 10px;
+                    background-color: #fff;
+                    color: #333;
+                }
+                p {
+                    margin-top: 0;
+                    margin-bottom: 0.75em;
+                }
+                img { max-width: 100%; height: auto; display: block; margin: 10px 0; }
             `,
-             mobile: { // মোবাইলের জন্য কনফিগারেশন
-                 menubar: true,
-                 plugins: 'lists autolink',
-                 toolbar: 'undo redo | bold italic | styles'
+            paste_as_text: true,
+            paste_data_images: true,
+            mobile: {
+                plugins: 'autosave lists autolink link image table charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons help',
+                menubar: true,
+                toolbar: 'undo redo | styles | bold italic | bullist numlist | link image | alignleft aligncenter alignright | forecolor backcolor | removeformat | code'
              }
         });
     }
 
-    // DOM লোড হওয়ার পর সকল .tinymce-editor ক্লাসের টেক্সটএরিয়াতে TinyMCE চালু করুন
+    // DOM লোড হওয়ার পর সকল বিদ্যমান .tinymce-editor ক্লাসের টেক্সটএরিয়াতে TinyMCE চালু করুন
     document.addEventListener('DOMContentLoaded', (event) => {
-        initializeTinyMCE('.tinymce-editor');
+        initializeTinyMCE('.tinymce-editor'); // এটি বিদ্যমান এডিটরগুলো লোড করবে
+
+        // === নতুন পেজ যোগ করার বাটনের জন্য ইভেন্ট লিসেনার ===
+        const addPageButton = document.getElementById('add-page-btn-edit');
+        if (addPageButton) { // বাটনটি যদি থাকে
+            addPageButton.addEventListener('click', function() {
+                const container = document.getElementById('pages-container-edit');
+                // নতুন পেজের জন্য একটি ইউনিক আইডি তৈরি (একাধিক নতুন পেজ যোগ করলে যাতে আলাদা হয়)
+                const newPageIndex = container.querySelectorAll('.new-page-marker').length + 1;
+                const newEditorId = `page-editor-new-${newPageIndex}`;
+
+                // নতুন পেজের জন্য HTML এলিমেন্ট তৈরি করুন
+                const newPageDiv = document.createElement('div');
+                newPageDiv.classList.add('page-input-edit', 'new-page-marker'); // নতুন পেজ শনাক্ত করার জন্য ক্লাস
+
+                // নতুন পেজের কন্টেন্ট
+                newPageDiv.innerHTML = `
+                    <h4>নতুন পাতা ${newPageIndex} (সংরক্ষণ করার পর আইডি পাবে)</h4>
+                    <input type="hidden" name="page_ids[]" value="new"> {# Backend কে জানানোর জন্য যে এটি নতুন পেজ #}
+                    {# টেক্সটএরিয়াতে tinymce-editor ক্লাস দেওয়া হয়নি, কারণ ইনিশিয়ালাইজ করা হবে আইডি দিয়ে #}
+                    <textarea name="pages_content[]" id="${newEditorId}" placeholder="নতুন পাতার বিষয়বস্তু..." rows="15"></textarea>
+                `;
+
+                // নতুন পেজের ডিভ কন্টেইনারে যোগ করুন
+                container.appendChild(newPageDiv);
+
+                // শুধুমাত্র এই নতুন টেক্সটএরিয়াতে TinyMCE চালু করুন
+                initializeTinyMCE(`#${newEditorId}`);
+            });
+        }
+        // ====================================================
     });
 
     {#
-    // যদি "আরও নতুন পাতা যোগ করুন" বাটন যোগ করা হয়, তার জন্য JavaScript লাগবে:
-    // Similar to admin.html, but needs to handle 'new' page IDs and content names.
-    // document.getElementById('add-page-btn-edit').addEventListener('click', function() {
-    //     const container = document.getElementById('pages-container-edit');
-    //     const newPageCount = container.querySelectorAll('.page-input-edit').length + 1; // Estimate next number
-    //     const newPageDiv = document.createElement('div');
-    //     newPageDiv.classList.add('page-input-edit', 'new-page');
-    //     const newEditorId = `page-editor-new-${newPageCount}`; // Unique ID for new editor
-    //     newPageDiv.innerHTML = `
-    //         <h4>নতুন পাতা ${newPageCount}</h4>
-    //         <input type="hidden" name="page_ids[]" value="new"> // Indicate new page
-    //         <textarea name="pages_content[]" id="${newEditorId}" class="tinymce-editor" placeholder="নতুন পাতার বিষয়বস্তু..."></textarea>
-    //     `;
-    //     container.appendChild(newPageDiv);
-    //     initializeTinyMCE(`#${newEditorId}`); // Initialize only the new editor
-    // });
-    #}
+    // ডিলিট বাটনের লজিক (যদি প্রয়োজন হয়, এটি শুধু উদাহরণ)
+    // const container = document.getElementById('pages-container-edit');
+    // if (container) {
+    //     container.addEventListener('click', function(event) {
+    //         if (event.target.classList.contains('delete-page-btn')) {
+    //             if (confirm('আপনি কি নিশ্চিতভাবে এই পাতাটি মুছে ফেলতে চান? আপডেট বাটনে ক্লিক করলে এটি স্থায়ীভাবে মুছে যাবে।')) {
+    //                  const pageDiv = event.target.closest('.page-input-edit');
+    //                  const pageId = event.target.dataset.pageId;
+    //                  // একটি হিডেন ইনপুট যোগ করা যেতে পারে যা ব্যাকএন্ডকে ডিলিট করতে বলবে
+    //                  // অথবা শুধু ডিভটি লুকিয়ে ফেলা যেতে পারে
+    //                  if (pageDiv) {
+    //                     // উদাহরণ: ডিভটি লুকিয়ে ফেলুন এবং একটি ইনপুট যোগ করুন
+    //                     pageDiv.style.display = 'none';
+    //                     const deleteInput = document.createElement('input');
+    //                     deleteInput.type = 'hidden';
+    //                     deleteInput.name = 'delete_page_ids[]'; // ব্যাকএন্ডে এই নামে আইডিগুলো যাবে
+    //                     deleteInput.value = pageId;
+    //                     pageDiv.appendChild(deleteInput); // ডিভের ভিতরে যোগ করুন যাতে সাবমিটের সময় যায়
 
-    {#
-    // যদি "এই পাতা মুছুন" বাটন যোগ করা হয়, তার জন্য JavaScript লাগবে:
-    // Needs careful handling to mark page for deletion on server or remove element + handle data.
-    // Example (client-side removal only, server needs logic):
-    // container.addEventListener('click', function(event) {
-    //     if (event.target.classList.contains('delete-page-btn')) {
-    //         if (confirm('আপনি কি নিশ্চিতভাবে এই পাতাটি মুছে ফেলতে চান? এটি সংরক্ষণ করার পর স্থায়ীভাবে মুছে যাবে।')) {
-    //              const pageDiv = event.target.closest('.page-input-edit');
-    //              // Add a hidden input to signal deletion maybe? Or just remove from DOM before submit.
-    //              // Example: pageDiv.style.display = 'none'; // Hide it visually
-    //              // Need a robust way to tell the backend to delete page with id event.target.dataset.pageId
-    //              alert("পাতা মুছে ফেলার জন্য চিহ্নিত করা হয়েছে। আপডেট বাটনে ক্লিক করে সংরক্ষণ করুন।"); // Placeholder
+    //                     // বিকল্প: শুধু ডিলিট বাটন ডিজেবল করুন বা অন্য কোনো ভিজুয়াল ইঙ্গিত দিন
+    //                     // event.target.disabled = true;
+    //                     // event.target.textContent = 'মুছে ফেলা হবে';
+    //                  }
+    //                  alert("পাতা মুছে ফেলার জন্য চিহ্নিত করা হয়েছে। আপডেট বাটনে ক্লিক করে পরিবর্তন সংরক্ষণ করুন।");
+    //             }
     //         }
-    //     }
-    // });
+    //     });
+    // }
     #}
 
 </script>
 {% endblock %}
 {# ================================== #}
-
