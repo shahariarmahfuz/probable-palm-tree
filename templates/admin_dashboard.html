@@ -194,10 +194,10 @@
                         <td data-label="ক্রিয়াকলাপ">
                             <a href="{{ url_for('view_content_first_page', content_id=item.id) }}" target="_blank" class="action-link view">[দেখুন]</a>
                             <a href="{{ url_for('edit_content_form', content_id=item.id) }}" class="action-link edit">[সম্পাদনা]</a>
-                            <form method="post" action="{{ url_for('reanalyze_content', content_id=item.id) }}" onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই কনটেন্টের AI ডেটা পুনরায় বিশ্লেষণ করতে চান? এতে কিছু সময় লাগতে পারে।');">
+                            <form method="post" action="{{ url_for('reanalyze_content', content_id=item.id) }}" onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই কনটেন্টের AI ডেটা পুনরায় বিশ্লেষণ করতে চান? এতে কিছু সময় লাগতে পারে।');" style="display: inline-block; margin: 0 5px 5px 0;">
                                 <button type="submit" class="action-button reanalyze">পুনরায় বিশ্লেষণ (AI)</button>
                             </form>
-                            <form method="post" action="{{ url_for('delete_content', content_id=item.id) }}" onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই কনটেন্টটি মুছে ফেলতে চান?');">
+                            <form method="post" action="{{ url_for('delete_content', content_id=item.id) }}" onsubmit="return confirm('আপনি কি নিশ্চিতভাবে এই কনটেন্টটি মুছে ফেলতে চান?');" style="display: inline-block; margin: 0 5px 5px 0;">
                                 <button type="submit" class="action-button delete">মুছুন</button>
                             </form>
                         </td>
@@ -217,10 +217,26 @@
         function initializeTinyMCE(selector) {
             tinymce.init({
                 selector: selector,
-                plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
-                menubar: 'file edit view insert format tools table help',
-                toolbar: 'undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist | link image | table | removeformat | fullscreen preview | help',
-                height: 400,
+                // === উন্নত ফিচার এবং স্পেসিং সমাধানের জন্য যুক্ত করা হয়েছে ===
+                plugins: [ // প্রয়োজনীয় প্রায় সকল প্লাগইন যুক্ত করা হয়েছে
+                    'preview', 'importcss', 'searchreplace', 'autolink', 'autosave', 'save', 'directionality',
+                    'code', 'visualblocks', 'visualchars', 'fullscreen', 'image', 'link', 'media', 'template',
+                    'codesample', 'table', 'charmap', 'pagebreak', 'nonbreaking', 'anchor', 'insertdatetime',
+                    'advlist', 'lists', 'wordcount', 'help', 'charmap', 'quickbars', 'emoticons', 'accordion',
+                    'hr', // Horizontal rule যোগ করা হয়েছে
+                    'paste', // Paste প্লাগইন উন্নত করা হয়েছে
+                    'print', // Print বাটন যোগ করা হয়েছে
+                    'textcolor', 'colorpicker' // Text color এবং background color যোগ করা হয়েছে
+                ],
+                menubar: 'file edit view insert format tools table help', // মেনুবার পূর্ণাঙ্গ করা হয়েছে
+                toolbar: // টুলবার উন্নত এবং পুনর্বিন্যাস করা হয়েছে
+                    'undo redo | styles | bold italic underline strikethrough | ' +
+                    'forecolor backcolor | alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | link image media table hr | ' +
+                    'removeformat | subscript superscript | charmap | code | ' +
+                    'fullscreen preview print | help',
+                // height: 500, // উচ্চতা প্রয়োজন অনুযায়ী পরিবর্তন করুন
+                height: 450, // আগের চেয়ে কিছুটা বাড়ানো হলো
                 language: 'bn',
                 language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n/langs6/bn.js',
                 autosave_ask_before_unload: true,
@@ -230,24 +246,63 @@
                 autosave_retention: '2m',
                 image_advtab: true,
                 importcss_append: true,
+                // === স্পেসিং সমস্যা সমাধানের জন্য content_style পরিবর্তন ===
                 content_style: `
-                    body { font-family: 'Hind Siliguri', sans-serif; font-size: 16px; line-height: 1.7; padding: 8px; }
-                    p { margin: 0 0 1em 0; }
-                    img { max-width: 100%; height: auto; }
+                    body {
+                        font-family: 'Hind Siliguri', sans-serif;
+                        font-size: 16px;
+                        line-height: 1.7; /* লাইনের মধ্যে সাধারণ দূরত্ব */
+                        padding: 10px;
+                        background-color: #fff; /* এডিটরের ভিতরের ব্যাকগ্রাউন্ড */
+                        color: #333; /* এডিটরের ভিতরের লেখার রঙ */
+                    }
+                    p {
+                        margin-top: 0; /* প্যারাগ্রাফের উপরের মার্জিন কমানো হলো */
+                        margin-bottom: 0.75em; /* প্যারাগ্রাফের নিচের মার্জিন কিছুটা কমানো হলো (আগে 1em ছিল) */
+                        /* প্রয়োজনে এই মান (0.75em) আরও কমাতে বা বাড়াতে পারেন, যেমন: 0.5em বা 1em */
+                    }
+                    img { max-width: 100%; height: auto; display: block; margin: 10px 0; }
+                    /* অন্যান্য প্রয়োজনীয় স্টাইল এখানে যোগ করতে পারেন */
                 `,
-                 mobile: { menubar: true, plugins: 'lists autolink', toolbar: 'undo redo | bold italic | styles' }
+                 // === পেস্ট করার সময় স্টাইল পরিষ্কার করার অপশন ===
+                paste_as_text: true, // ডিফল্টভাবে প্লেইন টেক্সট হিসাবে পেস্ট হবে, স্টাইলিং সমস্যা কমবে
+                paste_data_images: true, // ছবি পেস্ট করার সুবিধা রাখা হলো
+
+                // উন্নত mobile সেটিংস
+                 mobile: {
+                    plugins: 'autosave lists autolink link image table charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons help', // মোবাইলের জন্য আরও প্লাগইন
+                    menubar: true,
+                    toolbar: 'undo redo | styles | bold italic | bullist numlist | link image | alignleft aligncenter alignright | forecolor backcolor | removeformat | code' // মোবাইলের জন্য উন্নত টুলবার
+                 }
             });
         }
-        document.addEventListener('DOMContentLoaded', (event) => { initializeTinyMCE('.tinymce-editor'); });
-        document.getElementById('add-page-btn').addEventListener('click', function() {
-            const container = document.getElementById('pages-container');
-            const pageCount = container.getElementsByClassName('page-input').length + 1;
-            const newPageDiv = document.createElement('div');
-            newPageDiv.classList.add('page-input');
-            const newEditorId = `page-editor-${pageCount}`;
-            newPageDiv.innerHTML = `<textarea name="pages[]" id="${newEditorId}" rows="15" placeholder="পাতা ${pageCount}-এর বিষয়বস্তু..."></textarea>`;
-            container.appendChild(newPageDiv);
-            initializeTinyMCE(`#${newEditorId}`);
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+             // প্রাথমিক লোডে প্রথম এডিটর ইনিশিয়ালাইজ করুন
+            initializeTinyMCE('.tinymce-editor');
+
+            // নতুন পাতা যোগ করার বাটন লিসেনার
+            document.getElementById('add-page-btn').addEventListener('click', function() {
+                const container = document.getElementById('pages-container');
+                const pageCount = container.getElementsByClassName('page-input').length + 1;
+                const newPageDiv = document.createElement('div');
+                newPageDiv.classList.add('page-input');
+                const newEditorId = `page-editor-${pageCount}`;
+
+                // নতুন টেক্সটএরিয়া তৈরি করুন
+                const newTextarea = document.createElement('textarea');
+                newTextarea.name = `pages[]`;
+                newTextarea.id = newEditorId;
+                newTextarea.rows = 15;
+                newTextarea.placeholder = `পাতা ${pageCount}-এর বিষয়বস্তু...`;
+                // newTextarea.classList.add('tinymce-editor'); // ক্লাস যোগ করার দরকার নেই, কারণ আমরা সরাসরি আইডি দিয়ে ইনিশিয়ালাইজ করব
+
+                newPageDiv.appendChild(newTextarea); // টেক্সটএরিয়া ডিভে যোগ করুন
+                container.appendChild(newPageDiv); // ডিভ কন্টেইনারে যোগ করুন
+
+                // নতুন টেক্সটএরিয়াকে TinyMCE এডিটর হিসাবে ইনিশিয়ালাইজ করুন
+                initializeTinyMCE(`#${newEditorId}`);
+            });
         });
     </script>
 
