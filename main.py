@@ -11,7 +11,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'a_very_secret_dev_key_please_change')
 
-DATABASE_URL = os.environ.get('DATABASE_URL', "postgresql://halabro_user:8A4vmzor3nbhhUApV5UGqXBsX7tEoBD3@dpg-d0aakis9c44c738qiq70-a/halabro")
+DATABASE_URL = os.environ.get('DATABASE_URL', "postgresql://halabro_user:8A4vmzor3nbhhUApV5UGqXBsX7tEoBD3@dpg-d0aakis9c44c738qiq70-a.singapore-postgres.render.com/halabro")
 
 gemini_model = None
 try:
