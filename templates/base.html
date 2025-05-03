@@ -67,7 +67,6 @@
     <header>
         <h1><a href="{{ url_for('index') }}">বাংলা প্রথম পত্র</a></h1>
         <nav>
-            <a href="{{ url_for('index') }}">হোম</a>
             {% if 'admin_logged_in' in session %}
                 <a href="{{ url_for('admin_dashboard') }}">অ্যাডমিন ড্যাশবোর্ড</a>
                 <a href="{{ url_for('admin_logout') }}">লগআউট</a>
