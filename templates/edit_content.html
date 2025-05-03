@@ -33,13 +33,9 @@
             </div>
             {% endfor %}
         {% else %}
-            <p>কোনো পাতা পাওয়া যায়নি। আপনি নতুন পাতা যোগ করতে পারেন।</p>
+            <p>কোনো পাতা পাওয়া যায়নি।</p>
         {% endif %}
     </div>
-
-    {# === নতুন পেজ যোগ করার বাটন যুক্ত করা হলো === #}
-    <button type="button" id="add-page-btn-edit" style="margin-top: 15px; background-color: #28a745; border-color: #28a745;">আরও নতুন পাতা যোগ করুন</button>
-    {# ========================================= #}
 
     <br><br><br> {# বাটনের নিচে একটু স্পেস #}
     <button type="submit">আপডেট করুন</button>
@@ -62,7 +58,7 @@
         padding-bottom: 8px;
     }
     /* নতুন যোগ করা বাটনের স্টাইল */
-    #add-page-btn-edit {
+    /* #add-page-btn-edit {
         padding: 8px 15px;
         color: white;
         border: none;
@@ -74,7 +70,7 @@
     }
     #add-page-btn-edit:hover {
         background-color: #218838; /* Hover কালার */
-    }
+    } */
 
     /* ডিলিট বাটন স্টাইল (যদি ব্যবহার করা হয়) */
     /* .delete-page-btn { background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 0.85em; float: right; margin-top: -5px; } */
@@ -99,12 +95,12 @@
                 'code', 'visualblocks', 'visualchars', 'fullscreen', 'image', 'link', 'media', 'template',
                 'codesample', 'table', 'charmap', 'pagebreak', 'nonbreaking', 'anchor', 'insertdatetime',
                 'advlist', 'lists', 'wordcount', 'help', 'charmap', 'quickbars', 'emoticons', 'accordion',
-                'hr', 'paste', 'print', 'textcolor', 'colorpicker'
+                'hr', 'paste', 'print', 'textcolor', 'colorpicker', 'justify' // 'justify' প্লাগইন যোগ করা হলো
             ],
             menubar: 'file edit view insert format tools table help',
             toolbar:
                 'undo redo | styles | bold italic underline strikethrough | ' +
-                'forecolor backcolor | alignleft aligncenter alignright alignjustify | ' +
+                'forecolor backcolor | alignleft aligncenter alignright alignjustify | ' + // 'alignjustify' টুলবার-এ যোগ করা হলো
                 'bullist numlist outdent indent | link image media table hr | ' +
                 'removeformat | subscript superscript | charmap | code | ' +
                 'fullscreen preview print | help',
@@ -138,7 +134,7 @@
             mobile: {
                 plugins: 'autosave lists autolink link image table charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons help',
                 menubar: true,
-                toolbar: 'undo redo | styles | bold italic | bullist numlist | link image | alignleft aligncenter alignright | forecolor backcolor | removeformat | code'
+                toolbar: 'undo redo | styles | bold italic | bullist numlist | link image | alignleft aligncenter alignright alignjustify | forecolor backcolor | removeformat | code' // মোবাইল টুলবারেও 'alignjustify' যোগ করা হলো
              }
         });
     }
@@ -146,36 +142,6 @@
     // DOM লোড হওয়ার পর সকল বিদ্যমান .tinymce-editor ক্লাসের টেক্সটএরিয়াতে TinyMCE চালু করুন
     document.addEventListener('DOMContentLoaded', (event) => {
         initializeTinyMCE('.tinymce-editor'); // এটি বিদ্যমান এডিটরগুলো লোড করবে
-
-        // === নতুন পেজ যোগ করার বাটনের জন্য ইভেন্ট লিসেনার ===
-        const addPageButton = document.getElementById('add-page-btn-edit');
-        if (addPageButton) { // বাটনটি যদি থাকে
-            addPageButton.addEventListener('click', function() {
-                const container = document.getElementById('pages-container-edit');
-                // নতুন পেজের জন্য একটি ইউনিক আইডি তৈরি (একাধিক নতুন পেজ যোগ করলে যাতে আলাদা হয়)
-                const newPageIndex = container.querySelectorAll('.new-page-marker').length + 1;
-                const newEditorId = `page-editor-new-${newPageIndex}`;
-
-                // নতুন পেজের জন্য HTML এলিমেন্ট তৈরি করুন
-                const newPageDiv = document.createElement('div');
-                newPageDiv.classList.add('page-input-edit', 'new-page-marker'); // নতুন পেজ শনাক্ত করার জন্য ক্লাস
-
-                // নতুন পেজের কন্টেন্ট
-                newPageDiv.innerHTML = `
-                    <h4>নতুন পাতা ${newPageIndex} (সংরক্ষণ করার পর আইডি পাবে)</h4>
-                    <input type="hidden" name="page_ids[]" value="new"> {# Backend কে জানানোর জন্য যে এটি নতুন পেজ #}
-                    {# টেক্সটএরিয়াতে tinymce-editor ক্লাস দেওয়া হয়নি, কারণ ইনিশিয়ালাইজ করা হবে আইডি দিয়ে #}
-                    <textarea name="pages_content[]" id="${newEditorId}" placeholder="নতুন পাতার বিষয়বস্তু..." rows="15"></textarea>
-                `;
-
-                // নতুন পেজের ডিভ কন্টেইনারে যোগ করুন
-                container.appendChild(newPageDiv);
-
-                // শুধুমাত্র এই নতুন টেক্সটএরিয়াতে TinyMCE চালু করুন
-                initializeTinyMCE(`#${newEditorId}`);
-            });
-        }
-        // ====================================================
     });
 
     {#
