@@ -38,7 +38,7 @@
             font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             line-height: 1.8; /* পঠনযোগ্যতার জন্য লাইন হাইট বৃদ্ধি */
             background-color: var(--light-bg); /* পুরো পেজের জন্য হালকা ব্যাকগ্রাউন্ড */
-            color: var(--dark-text);
+            color: var(--dark-text); /* বেস টেক্সট কালার */
             font-size: 16px; /* বেস ফন্ট সাইজ */
             padding-top: 20px; /* উপরে একটু স্পেস */
             padding-bottom: 40px; /* নিচে একটু স্পেস */
@@ -104,7 +104,7 @@
             background-color: var(--white-color); /* সাদা ব্যাকগ্রাউন্ড */
             border: none; /* আগের বর্ডার বাদ */
             font-size: 1.1em; /* স্ট্যান্ডার্ড ফন্ট সাইজ */
-            color: #333; /* টেক্সটের রং একটু হালকা */
+            color: #333; /* ডিফল্ট টেক্সটের রং একটু হালকা, তবে ইনলাইন স্টাইল এটি ওভাররাইড করতে পারবে */
             overflow-wrap: break-word;
             word-wrap: break-word;
         }
@@ -124,11 +124,11 @@
         }
         .story-content strong, .story-content b {
             font-weight: 600;
-            color: #1a1a1a; /* বোল্ড টেক্সট সামান্য গাঢ় */
+            /* color: #1a1a1a; */ /* এই রং টি নির্দিষ্ট করা ছিল, এখন এটি প্যারেন্ট থেকে ইনহেরিট করবে অথবা ইনলাইন স্টাইল দ্বারা ওভাররাইড হবে */
         }
         .story-content em, .story-content i {
             font-style: italic;
-            color: #555; /* ইটালিক টেক্সটের ভিন্ন রং */
+            /* color: #555; */ /* এই রং টি নির্দিষ্ট করা ছিল, এখন এটি প্যারেন্ট থেকে ইনহেরিট করবে অথবা ইনলাইন স্টাইল দ্বারা ওভাররাইড হবে */
         }
         .story-content a {
             color: var(--primary-color);
@@ -176,6 +176,13 @@
             border-radius: 3px;
             font-size: 0.9em;
         }
+        /* ইনলাইন স্টাইল যেমন <span style="color: red;"> কে অগ্রাধিকার দেওয়ার জন্য অতিরিক্ত CSS প্রয়োজন নেই */
+        .story-content span[style*="color"] {
+            /* এই রুলটি শুধুমাত্র নিশ্চিত করার জন্য যে ইনলাইন স্টাইল ঠিকমতো কাজ করছে, */
+            /* তবে সাধারণত ব্রাউজার ইনলাইন স্টাইলকে স্বাভাবিকভাবেই অগ্রাধিকার দেয়। */
+            /* এই ব্লকটি না লিখলেও কাজ করার কথা। */
+        }
+
 
         /* === AI ডেটা সেকশন (গুরুত্বপূর্ণ লাইন ও সংজ্ঞা) === */
         .ai-data-section {
@@ -470,20 +477,25 @@
 </head>
 <body>
     <div class="content-container">
-        {# শিরোনাম এবং বিষয়বস্তুর প্রকার দেখানোর জন্য নতুন ক্লাস ব্যবহার #}
+        {# === নিচের ভেরিয়েবলগুলো আপনার সার্ভার-সাইড টেমপ্লেটিং ইঞ্জিন থেকে আসবে === #}
+        {# উদাহরণস্বরূপ Jinja2, Django Templates, ইত্যাদি অনুযায়ী সিনট্যাক্স ভিন্ন হতে পারে #}
+
+        {# শিরোনাম এবং বিষয়বস্তুর প্রকার দেখানোর জন্য #}
         <h2 class="main-title">
-            {{ content_item.title }}
-            <small>{{ content_item.content_type }}</small>
+            {{ content_item.title | default('বিষয়বস্তুর শিরোনাম') }} {# ডিফল্ট মান দেওয়া ভালো #}
+            <small>{{ content_item.content_type | default('প্রকার') }}</small> {# ডিফল্ট মান দেওয়া ভালো #}
         </h2>
-        {# পৃষ্ঠা নম্বর দেখানোর জন্য নতুন ক্লাস ব্যবহার #}
-        <h3 class="page-info">পাতা {{ current_page }} / {{ total_pages }}</h3>
+        {# পৃষ্ঠা নম্বর দেখানোর জন্য #}
+        <h3 class="page-info">পাতা {{ current_page | default(1) }} / {{ total_pages | default(1) }}</h3>
 
         <div class="story-content">
             {# |safe ফিল্টার ব্যবহার করে HTML রেন্ডার করা হচ্ছে #}
-            {{ page_data.page_content | safe }}
+            {# page_data.page_content এ TinyMCE থেকে আসা HTML থাকবে #}
+            {{ page_data.page_content | default('<p>এখানে বিষয়বস্তু লোড হবে...</p>') | safe }}
         </div>
 
         {# AI ডেটা সেকশনগুলো এখন .ai-data-section ক্লাসের অধীনে #}
+        {# নিচের ভেরিয়েবলগুলোও টেমপ্লেট ইঞ্জিন থেকে আসবে #}
         {% if important_lines or definitions %}
             {% if important_lines %}
             <div class="ai-data-section important-lines">
@@ -511,13 +523,14 @@
         <div class="page-navigation">
             {# আগের পাতার বাটন #}
             {% if current_page > 1 %}
+                {# url_for ফাংশন আপনার ওয়েব ফ্রেমওয়ার্ক অনুযায়ী পরিবর্তন হতে পারে (যেমন Flask, Django) #}
                 <a href="{{ url_for('view_content_page', content_id=content_id, page_number=current_page-1) }}">আগের পাতা</a>
             {% else %}
                 <span>আগের পাতা</span> {# নিষ্ক্রিয় বাটন #}
             {% endif %}
 
             {# বর্তমান পৃষ্ঠা সংখ্যা #}
-            <span class="current-page">{{ current_page }}</span>
+            <span class="current-page">{{ current_page | default(1) }}</span>
 
             {# পরের পাতার বাটন #}
             {% if current_page < total_pages %}
@@ -529,6 +542,7 @@
 
         {# হোমপেজে ফেরার লিংক #}
         <div class="back-to-home">
+             {# url_for ফাংশন আপনার ওয়েব ফ্রেমওয়ার্ক অনুযায়ী পরিবর্তন হতে পারে #}
             <a href="{{ url_for('index') }}">হোমপেজে ফিরে যান</a>
         </div>
     </div>
