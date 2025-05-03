@@ -489,7 +489,7 @@
             <div class="ai-data-section important-lines">
                 <h4>গুরুত্বপূর্ণ লাইনসমূহ:</h4>
                 <ul>
-                    {% for line in important_lines %}<li>{{ line }}</li>{% endfor %}
+                    {% for line in important_lines %}<li>{{ line | safe }}</li>{% endfor %}
                 </ul>
             </div>
             {% endif %}
