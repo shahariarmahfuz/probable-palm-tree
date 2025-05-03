@@ -24,7 +24,7 @@ class ApiKeyManager:
                                     যেমন: "key1,key2,key3"
         """
         if not api_keys_string:
-            self.api_keys = ['AIzaSyBMNhMXZRitaMHtfzWi8WuB9BpxKeiXrok','AIzaSyAbuuYt4H3GfRc24Piod6TckCw64mZXH8I','AIzaSyBTyMOEXRq-CA7ITiah6YBd-w8zdMj5UF0',]
+            self.api_keys = ['AIzaSyBMNhMXZRitaMHtfzWi8WuB9BpxKeiXrok','AIzaSyAbuuYt4H3GfRc24Piod6TckCw64mZXH8I','AIzaSyBTyMOEXRq-CA7ITiah6YBd-w8zdMj5UF0','AIzaSyDSYXJhANmrunwsV1ngTcTQULGh3Fhonnk','AIzaSyDxkpY5uJk83lbCiGgY8jCPZD2owd7NS9M','AIzaSyBoiX-aXnsaahxiIhkMXG4a1jBJ-a48QFs',]
         else:
             # কমা দিয়ে ভাগ করে এবং খালি স্ট্রিং/স্পেস বাদ দিয়ে কী লিস্ট তৈরি করুন
             self.api_keys = [key.strip() for key in api_keys_string.split(',') if key.strip()]
