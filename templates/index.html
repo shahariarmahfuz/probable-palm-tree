@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}স্বাগতম - গল্পের দুনিয়া{% endblock %}
+{% block title %}স্বাগতম - বাংলা প্রথম পত্র{% endblock %} {# টাইটেল আপডেট করা হলো #}
 
 {% block content %}
 <h2>সকল কনটেন্ট</h2>
@@ -7,23 +7,46 @@
 {% if grouped_content %}
     {# প্রতিটি কনটেন্ট টাইপের জন্য আলাদা সেকশন #}
     {% for content_type, items in grouped_content.items() %}
-        <h3>{{ content_type }}</h3>
+        {# কন্টেন্ট টাইপের জন্য স্টাইল করা হেডিং #}
+        <h3 class="content-type-heading">{{ content_type }}</h3>
+
         {% if items %}
-            <ul>
+            {# কন্টেন্টের তালিকা #}
+            <ul class="content-list">
                 {% for item in items %}
                     <li>
-                        {# লিংক পরিবর্তন করা হয়েছে #}
+                        {# লিঙ্ক আগের মতোই আছে, স্টাইল বেস টেমপ্লেট থেকে আসবে #}
                         <a href="{{ url_for('view_content_first_page', content_id=item.id) }}">{{ item.title }}</a>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-             <p>এই ধরণের কোনো কনটেন্ট নেই।</p> {# যদিও এটা হওয়া উচিত নয় যদি grouping ঠিক থাকে #}
+             {# এই বার্তা প্রদর্শিত হওয়া উচিত নয় যদি গ্রুপ করা ডেটা ঠিক থাকে #}
+             <p>এই ধরণের কোনো কনটেন্ট এখনো যোগ করা হয়নি।</p>
         {% endif %}
-        <hr style="margin: 20px 0;"> {# টাইপের মধ্যে বিভেদক #}
+
+        {# সেকশনগুলোর মধ্যে একটি সুন্দর বিভেদক (শেষেরটির পরে দেখাবে না) #}
+        {% if not loop.last %}
+            <hr class="section-separator">
+        {% endif %}
+
     {% endfor %}
 {% else %}
-    <p>এখনো কোনো কনটেন্ট যোগ করা হয়নি।</p>
+    {# যদি কোনো কনটেন্টই না থাকে #}
+    <div style="text-align: center; padding: 30px; background-color: #f0f0f0; border-radius: 8px;">
+        <p style="font-size: 1.1em; color: #555;">এখনো কোনো কনটেন্ট যোগ করা হয়নি।</p>
+        {# অ্যাডমিন লগইন করা থাকলে নতুন কনটেন্ট যোগ করার লিঙ্ক দিতে পারেন #}
+        {% if 'admin_logged_in' in session %}
+            <p><a href="{{ url_for('admin_add_content') }}" class="button-like">নতুন কনটেন্ট যোগ করুন</a></p>
+             {# .button-like ক্লাস base.html এ যোগ করতে পারেন অথবা এখানেই স্টাইল করতে পারেন #}
+             <style>
+                 .button-like {
+                     display: inline-block; padding: 10px 20px; background-color: var(--primary-color); color: white; border-radius: 5px; text-decoration: none; font-weight: 500; margin-top: 15px; transition: background-color 0.3s ease;
+                 }
+                 .button-like:hover { background-color: #229954; }
+             </style>
+        {% endif %}
+    </div>
 {% endif %}
 
 {% endblock %}
