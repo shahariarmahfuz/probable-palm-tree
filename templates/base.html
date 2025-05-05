@@ -10,66 +10,493 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ফন্ট ফ্যামিলি আপডেট করা হয়েছে */
+        /* --- ভ্যারিয়েবলস (সহজে রঙ পরিবর্তন করার জন্য) --- */
+        :root {
+            --primary-color: #27ae60; /* একটি সবুজাভ রঙ */
+            --secondary-color: #2c3e50; /* গাঢ় নেভি ব্লু */
+            --background-color: #f8f9fa; /* হালকা ধূসর */
+            --container-bg: #ffffff; /* সাদা */
+            --text-color: #34495e; /* গাঢ় ধূসর টেক্সট */
+            --heading-color: var(--secondary-color);
+            --link-color: var(--primary-color);
+            --border-color: #dee2e6;
+            --light-border-color: #ecf0f1;
+            --cream-bg-light: #fffaf0; /* হালকা ক্রিম */
+            --cream-text: #8B4513; /* ব্রাউন টেক্সট (ক্রিমের সাথে ভালো যায়) */
+            --font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            --base-font-size: 16px; /* বেস ফন্ট সাইজ */
+            --base-line-height: 1.8; /* উন্নত পঠনযোগ্যতার জন্য লাইন হাইট */
+        }
+
+        /* --- গ্লোবাল রিসেট এবং বেস স্টাইল --- */
+        *, *::before, *::after {
+            box-sizing: border-box; /* সহজ লেআউটের জন্য */
+        }
+
         body {
-            font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            line-height: 1.7; /* সামান্য বাড়ানো হলো পড়ার সুবিধার জন্য */
+            font-family: var(--font-family);
+            line-height: var(--base-line-height);
+            font-size: var(--base-font-size);
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
-            color: #212529;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            -webkit-font-smoothing: antialiased; /* ফন্ট মসৃণ দেখানোর জন্য */
+            -moz-osx-font-smoothing: grayscale;
         }
-        /* বাকি স্টাইলগুলো আগের মতই রাখা যেতে পারে, প্রয়োজনে সামঞ্জস্য করুন */
-        .container { max-width: 900px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        header { background-color: #007bff; color: #fff; padding: 15px 0; text-align: center; border-bottom: 3px solid #0056b3; margin-bottom: 20px; }
-        header h1 a { color: #fff; text-decoration: none; font-weight: 600; /* ফন্ট ওয়েট সামঞ্জস্য করা */ }
-        nav a { color: #fff; text-decoration: none; margin: 0 15px; font-weight: 500; }
-        nav a:hover { text-decoration: underline; }
-        h1, h2, h3 { color: #343a40; font-weight: 600; } /* হেডিং এর ফন্ট ওয়েট */
-        h2 { border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-bottom: 15px; }
-        h3 { margin-top: 20px; font-weight: 500; }
-        .flash-messages { list-style: none; padding: 0; margin: 15px 0; }
-        .flash-messages li { padding: 12px 15px; margin-bottom: 10px; border-radius: 4px; border: 1px solid transparent; }
-        .flash-messages .success { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc; }
-        .flash-messages .error { background-color: #f8d7da; color: #842029; border-color: #f5c2c7; }
-        .flash-messages .warning { background-color: #fff3cd; color: #664d03; border-color: #ffecb5; }
-        .flash-messages .info { background-color: #cff4fc; color: #055160; border-color: #b6effb; }
-        footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 0.9em; color: #6c757d; }
-        .story-content { margin-bottom: 20px; padding: 15px 20px; background-color: #eef7ff; border-left: 5px solid #0d6efd; border-radius: 5px; font-size: 1.1em; }
-        .story-content p { white-space: pre-line; margin: 0; }
-        .definitions { margin-top: 20px; padding: 15px; background-color: #fff9e6; border: 1px solid #ffecb3; border-radius: 5px; }
-        .definitions h3 { margin-top: 0; color: #664d03; font-weight: 600;}
-        .definitions ul { list-style: none; padding: 0; }
-        .definitions li { margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
-        .definitions li:last-child { border-bottom: none; }
-        .definitions strong { color: #664d03; font-weight: 600;} /* শব্দের ফন্ট ওয়েট */
-        .page-navigation { margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
-        .page-navigation a, .page-navigation span { display: inline-block; padding: 8px 15px; margin: 0 5px; border: 1px solid #dee2e6; text-decoration: none; color: #0d6efd; border-radius: 4px; transition: background-color 0.2s, color 0.2s; }
-        .page-navigation a:hover { background-color: #e9ecef; color: #0056b3; }
-        .page-navigation .current-page { background-color: #0d6efd; color: white; border-color: #0d6efd; cursor: default; }
-        .page-navigation span:not(.current-page) { color: #6c757d; background-color: #f8f9fa; cursor: not-allowed; }
-        .admin-actions form { display: inline-block; margin-left: 10px; }
-        .admin-actions button { background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 0.9em; }
-        .admin-actions button:hover { background-color: #c82333; }
-        #add-page-btn { margin-top: 10px; padding: 8px 12px; background-color: #198754; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        #add-page-btn:hover { background-color: #157347; }
-        .page-input { margin-bottom: 10px; }
-        textarea { width: 95%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-family: 'Hind Siliguri', sans-serif; font-size: 1rem;} /* টেক্সটএরিয়াতেও ফন্ট */
-        input[type="text"], input[type="password"] { padding: 8px; border: 1px solid #ced4da; border-radius: 4px; width: calc(100% - 20px); max-width: 300px;}
-        label { margin-bottom: 5px; display: block; font-weight: 500;}
-        button[type="submit"] { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; font-family: 'Hind Siliguri', sans-serif;} /* বাটনেও ফন্ট */
-        button[type="submit"]:hover { background-color: #0056b3; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; }
+
+        /* --- কন্টেইনার --- */
+        .container {
+            max-width: 900px;
+            margin: 30px auto; /* উপরে নিচে মার্জিন বাড়ানো হলো */
+            padding: 30px; /* প্যাডিং বাড়ানো হলো */
+            background-color: var(--container-bg);
+            border-radius: 10px; /* বর্ডার রেডিয়াস সামান্য বাড়ানো */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* শ্যাডো উন্নত করা হলো */
+            transition: margin 0.3s ease; /* স্ক্রিন ছোট হলে মার্জিন পরিবর্তন হবে */
+        }
+
+        /* --- হেডার এবং নেভিগেশন --- */
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 20px 0; /* প্যাডিং বাড়ানো */
+            text-align: center;
+            margin-bottom: 30px; /* মার্জিন বাড়ানো */
+            border-bottom: 5px solid rgba(0, 0, 0, 0.1); /* নিচের বর্ডার স্টাইল */
+        }
+
+        header h1 a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700; /* ফন্ট ওয়েট বাড়ানো */
+            font-size: 2rem; /* সাইজ সামঞ্জস্য করা */
+            letter-spacing: 1px; /* অক্ষরের মাঝে স্পেস */
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            padding: 5px 10px; /* প্যাডিং যোগ করা */
+            border-radius: 4px; /* রেডিয়াস যোগ করা */
+            transition: background-color 0.3s ease, color 0.3s ease; /* ট্রানজিশন */
+        }
+
+        nav a:hover, nav a:focus { /* ফোকাস স্টাইল যুক্ত করা */
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none; /* আন্ডারলাইন সরানো */
+            outline: none; /* ফোকাস আউটলাইন */
+        }
+
+        /* --- হেডিং স্টাইল --- */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--heading-color);
+            font-weight: 600;
+            margin-top: 1.5em; /* উপরে মার্জিন */
+            margin-bottom: 0.8em; /* নিচে মার্জিন */
+            line-height: 1.4; /* হেডিং লাইন হাইট */
+        }
+        h1 { font-size: 2.2rem; }
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--light-border-color); /* বর্ডার উন্নত করা */
+            padding-bottom: 10px;
+            margin-bottom: 20px; /* নিচে মার্জিন বাড়ানো */
+        }
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-top: 30px;
+        }
+
+        /* --- ফ্ল্যাশ মেসেজ --- */
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0; /* নিচে মার্জিন বাড়ানো */
+        }
+        .flash-messages li {
+            padding: 15px 20px; /* প্যাডিং বাড়ানো */
+            margin-bottom: 15px; /* মার্জিন বাড়ানো */
+            border-radius: 6px; /* রেডিয়াস বাড়ানো */
+            border: 1px solid transparent;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* হালকা শ্যাডো */
+        }
+        /* রঙের স্কিম আপডেট করা */
+        .flash-messages .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .flash-messages .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .flash-messages .warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+        .flash-messages .info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+
+        /* --- ফুটার --- */
+        footer {
+            text-align: center;
+            margin-top: 40px; /* উপরে মার্জিন বাড়ানো */
+            padding-top: 25px; /* উপরে প্যাডিং বাড়ানো */
+            border-top: 1px solid var(--border-color);
+            font-size: 0.95em; /* সাইজ সামান্য বাড়ানো */
+            color: #6c757d;
+        }
+
+        /* --- কন্টেন্ট ব্লক (গল্প/সংজ্ঞা) --- */
+        .story-content {
+            margin-bottom: 30px; /* মার্জিন বাড়ানো */
+            padding: 20px 25px; /* প্যাডিং বাড়ানো */
+            background-color: #eafaf1; /* হালকা সবুজ ব্যাকগ্রাউন্ড */
+            border-left: 5px solid var(--primary-color); /* বামে মোটা বর্ডার */
+            border-radius: 6px; /* রেডিয়াস */
+            font-size: 1.05em; /* সাইজ সামঞ্জস্য */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .story-content p {
+            white-space: pre-line;
+            margin: 0;
+            line-height: var(--base-line-height); /* এখানেও লাইন হাইট */
+        }
+
+        .definitions {
+            margin-top: 30px;
+            padding: 20px 25px;
+            background-color: var(--cream-bg-light); /* ক্রিম ব্যাকগ্রাউন্ড */
+            border: 1px solid #ffe8cc; /* হালকা বর্ডার */
+            border-left: 5px solid var(--cream-text); /* ব্রাউন বাম বর্ডার */
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .definitions h3 {
+            margin-top: 0;
+            color: var(--cream-text); /* হেডিং কালার */
+            font-weight: 600;
+            border-bottom: 1px solid #ffe8cc; /* নিচে হালকা বর্ডার */
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .definitions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .definitions li {
+            margin-bottom: 12px; /* আইটেমের মাঝে দূরত্ব */
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 8px;
+        }
+        .definitions li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .definitions strong {
+            color: var(--cream-text);
+            font-weight: 600;
+            margin-right: 8px; /* শব্দের পরে স্পেস */
+        }
+
+        /* --- পেজিনেশন --- */
+        .page-navigation {
+            margin-top: 35px; /* উপরে মার্জিন */
+            padding-top: 20px; /* উপরে প্যাডিং */
+            border-top: 1px solid var(--light-border-color);
+            text-align: center;
+        }
+        .page-navigation a, .page-navigation span {
+            display: inline-block;
+            padding: 10px 18px; /* প্যাডিং বাড়ানো */
+            margin: 0 6px; /* মার্জিন সামঞ্জস্য */
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            color: var(--link-color);
+            border-radius: 5px; /* রেডিয়াস */
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            font-weight: 500;
+        }
+        .page-navigation a:hover, .page-navigation a:focus {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        .page-navigation .current-page {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            cursor: default;
+            font-weight: 700; /* বর্তমান পেজকে হাইলাইট */
+        }
+        .page-navigation span:not(.current-page) { /* যেমন '...' */
+            color: #aaa;
+            background-color: #f8f9fa;
+            border-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        /* --- অ্যাডমিন অ্যাকশন --- */
+        .admin-actions {
+            margin-top: 15px; /* উপরে কিছুটা স্পেস */
+        }
+        .admin-actions form {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .admin-actions button {
+            background-color: #e74c3c; /* ডিলিটের জন্য লাল */
+            color: white;
+            border: none;
+            padding: 6px 12px; /* প্যাডিং সামঞ্জস্য */
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: var(--font-family);
+            transition: background-color 0.3s ease;
+        }
+        .admin-actions button:hover {
+            background-color: #c0392b; /* হোভারে গাঢ় লাল */
+        }
+
+        /* --- ফর্ম এলিমেন্ট --- */
+        .page-input { /* ফর্ম গ্রুপের জন্য ক্লাস */
+            margin-bottom: 20px; /* ইনপুট গ্রুপের মাঝে দূরত্ব */
+        }
+        label {
+            display: block;
+            margin-bottom: 8px; /* লেবেল ও ইনপুটের মাঝে দূরত্ব */
+            font-weight: 600; /* লেবেল বোল্ড */
+            color: var(--secondary-color);
+            font-size: 0.95em;
+        }
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%; /* সব ইনপুটকে ফুল উইডথ */
+            padding: 12px 15px; /* প্যাডিং বাড়ানো */
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.15); /* ফোকাস শ্যাডো */
+            outline: none;
+        }
+        textarea {
+            min-height: 120px; /* টেক্সটএরিয়ার ন্যূনতম উচ্চতা */
+            line-height: 1.6; /* টেক্সটএরিয়ার ভিতরের লাইন হাইট */
+            resize: vertical; /* শুধু উল্লম্ব রিসাইজ */
+        }
+
+        /* --- বাটন --- */
+        button[type="submit"],
+        #add-page-btn { /* উভয় বাটনকে একই স্টাইল */
+            display: inline-block; /* ইনলাইন ব্লক */
+            padding: 12px 25px; /* প্যাডিং বাড়ানো */
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600; /* ফন্ট ওয়েট */
+            font-family: var(--font-family);
+            text-align: center;
+            text-decoration: none; /* যদি এটা <a> ট্যাগ হয় */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        button[type="submit"]:hover,
+        #add-page-btn:hover {
+            background-color: #229954; /* হোভারে সামান্য গাঢ় */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        #add-page-btn {
+             margin-top: 20px; /* অ্যাড বাটন উপরে স্পেস */
+             background-color: var(--secondary-color); /* অ্যাড বাটনের জন্য অন্য রঙ */
+        }
+         #add-page-btn:hover {
+             background-color: #212f3d;
+         }
+
+        /* --- তালিকা --- */
+        ul {
+            padding-left: 25px; /* প্যাডিং সামান্য বাড়ানো */
+            list-style-type: disc; /* ডিস্ক স্টাইল */
+        }
+        li {
+            margin-bottom: 12px; /* লিস্ট আইটেমের মাঝে দূরত্ব */
+            padding-left: 5px; /* টেক্সট ও বুলেটের মাঝে স্পেস */
+        }
+        ul li a {
+             color: var(--link-color);
+             text-decoration: none;
+             font-weight: 500;
+             transition: color 0.3s ease;
+        }
+         ul li a:hover {
+             color: var(--secondary-color);
+             text-decoration: underline;
+         }
+
+        /* --- সাধারণ লিংক স্টাইল --- */
+         a {
+            color: var(--link-color);
+            text-decoration: none;
+         }
+         a:hover {
+             text-decoration: underline;
+             color: var(--secondary-color);
+         }
+
+         /* --- index.html এর জন্য অতিরিক্ত স্টাইল --- */
+         .content-type-heading { /* যেমন: গল্প, কবিতা */
+            margin-top: 0; /* প্রথম হেডিং এর অতিরিক্ত মার্জিন সরানো */
+            margin-bottom: 15px;
+            font-size: 1.6rem; /* h3 এর থেকে একটু বড় */
+         }
+         .content-list { /* index.html এর ul */
+             margin-bottom: 30px; /* প্রতিটি সেকশনের নিচে স্পেস */
+             padding-left: 20px; /* তালিকা ইন্ডেন্টেশন */
+             list-style: none; /* ডিফল্ট বুলেট সরাতে চাইলে */
+         }
+        .content-list li {
+             margin-bottom: 10px;
+             padding: 5px 0; /* উপরে নিচে সামান্য প্যাডিং */
+             /* border-bottom: 1px dashed var(--light-border-color); */ /* চাইলে হালকা বর্ডার দিতে পারেন */
+         }
+         /* .content-list li:last-child {
+             border-bottom: none;
+         } */
+
+         .content-list li a {
+             font-size: 1.1em; /* টাইটেলের ফন্ট সাইজ */
+         }
+
+         .section-separator { /* index.html এর hr */
+             border: 0;
+             height: 1px;
+             background-color: var(--light-border-color);
+             margin: 40px 0; /* বিভেদকের উপরে নিচে স্পেস */
+         }
+
+        /* --- রেসপন্সিভ ডিজাইন --- */
+        @media (max-width: 992px) {
+            .container {
+                max-width: 720px; /* মিডিয়াম স্ক্রিনের জন্য */
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 15px; /* ছোট স্ক্রিনে ফন্ট সাইজ সামান্য কমানো */
+            }
+            .container {
+                max-width: none; /* ফুল উইডথ */
+                width: 100%;
+                margin: 0; /* উপরে নিচে মার্জিন ০ */
+                padding: 20px; /* প্যাডিং কমানো */
+                border-radius: 0; /* কোণা গোল না রাখা */
+                box-shadow: none; /* শ্যাডো বাদ দেওয়া */
+            }
+            header {
+                padding: 15px 0;
+                margin-bottom: 20px;
+                border-bottom-width: 3px;
+            }
+            header h1 a {
+                font-size: 1.8rem;
+            }
+            nav a {
+                 margin: 0 10px;
+                 padding: 4px 8px;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; margin-bottom: 15px; }
+            h3 { font-size: 1.3rem; margin-top: 25px; }
+            .content-type-heading { font-size: 1.4rem; } /* index.html এর হেডিং */
+
+            .flash-messages li { padding: 12px 15px; margin-bottom: 12px; }
+            .story-content, .definitions { padding: 15px 20px; margin-bottom: 25px; }
+            .page-navigation a, .page-navigation span { padding: 8px 12px; margin: 0 4px; }
+            footer { margin-top: 30px; padding-top: 20px; font-size: 0.9em; }
+
+            /* ফর্ম ইনপুট ফিল্ডের জন্য লেবেল উপরে থাকবে, ইনপুট ফুল উইডথ হবে */
+            input[type="text"],
+            input[type="password"],
+            textarea,
+            button[type="submit"],
+            #add-page-btn {
+                width: 100%; /* সব ইনপুট ও বাটন ফুল উইডথ */
+                /* max-width: none; - আগের কোডে ছিল, এখানে অপ্রয়োজনীয় */
+            }
+             button[type="submit"],
+             #add-page-btn {
+                 padding: 12px 20px; /* বাটনের প্যাডিং */
+             }
+            .page-input {
+                 margin-bottom: 15px; /* ছোট স্ক্রিনে ইনপুট গ্রুপের মাঝে দূরত্ব */
+             }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px; /* আরও ছোট স্ক্রিনে ফন্ট সাইজ */
+            }
+            .container {
+                padding: 15px; /* প্যাডিং আরও কমানো */
+            }
+            header h1 a {
+                font-size: 1.6rem;
+            }
+             nav {
+                 display: flex; /* নেভিগেশন আইটেম পাশাপাশি রাখতে */
+                 flex-direction: column; /* অথবা নিচে নিচে সাজাতে চাইলে */
+                 align-items: center; /* সেন্টারে আনতে */
+             }
+             nav a {
+                 margin: 5px 0; /* আইটেমের মাঝে উল্লম্ব স্পেস */
+                 display: block; /* পুরো জায়গা জুড়ে লিঙ্ক */
+             }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+            h3 { font-size: 1.2rem; }
+            .content-type-heading { font-size: 1.3rem; } /* index.html এর হেডিং */
+
+            .page-navigation {
+                margin-top: 25px;
+                padding-top: 15px;
+            }
+            .page-navigation a, .page-navigation span {
+                padding: 7px 10px;
+                margin: 0 3px;
+                font-size: 0.9em; /* পেজিনেশন ফন্ট ছোট করা */
+            }
+            .story-content, .definitions { padding: 12px 15px; font-size: 1em; }
+            footer { font-size: 0.85em; }
+        }
+
     </style>
 </head>
 <body>
     <header>
         <h1><a href="{{ url_for('index') }}">বাংলা প্রথম পত্র</a></h1>
         <nav>
+            {# এখানে দরকার হলে আরও নেভিগেশন লিঙ্ক যোগ করা যেতে পারে #}
             {% if 'admin_logged_in' in session %}
                 <a href="{{ url_for('admin_dashboard') }}">অ্যাডমিন ড্যাশবোর্ড</a>
                 <a href="{{ url_for('admin_logout') }}">লগআউট</a>
+            {% else %}
+                 {# সাধারণ ব্যবহারকারীর জন্য লিঙ্ক (যদি প্রয়োজন হয়) #}
+                 {# <a href="{{ url_for('home') }}">হোম</a> #}
+                 {# <a href="{{ url_for('about') }}">আমাদের সম্পর্কে</a> #}
             {% endif %}
         </nav>
     </header>
@@ -91,12 +518,16 @@
     </div>
 
     <footer>
-        {# বছর ডাইনামিক করতে চাইলে কনটেক্সট প্রসেসর লাগবে #}
-        <p>&copy; ২০২৫ বাংলা প্রথম পত্র ওয়েবসাইট। সর্বস্বত্ব সংরক্ষিত।</p> {# বছর আপডেট করুন #}
+        {# বছর ডাইনামিক করার জন্য Flask Context Processor ব্যবহার করা যেতে পারে #}
+        {# আপাতত বর্তমান বছর হার্ডকোড করা হলো #}
+        <p>&copy; ২০২৫ বাংলা প্রথম পত্র ওয়েবসাইট। সর্বস্বত্ব সংরক্ষিত।</p>
+        {# আপনি চাইলে এখানে আরও তথ্য যোগ করতে পারেন, যেমন ডেভেলপারের নাম বা লিঙ্ক #}
+        {# <p>ডিজাইন ও ডেভেলপমেন্ট: [আপনার নাম/প্রতিষ্ঠানের নাম]</p> #}
     </footer>
 
     {% block scripts %}
     {# এখানে পেজ-স্পেসিফিক জাভাস্ক্রিপ্ট যোগ করা যাবে #}
+    {# উদাহরণস্বরূপ, মোবাইল মেনুর জন্য JS লাগতে পারে যদি মেনু জটিল হয় #}
     {% endblock %}
 </body>
 </html>
